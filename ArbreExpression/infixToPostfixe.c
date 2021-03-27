@@ -2,7 +2,8 @@
 #include "structures.c"
 
 
-Cellule* Creer_cellule(char data){
+Cellule* Creer_cellule(char data)
+{
     Cellule* NE = NULL; //déclaration du nouvel élément
  
     NE = (Cellule *)malloc(sizeof(Cellule)); //allocation dynamique pour la nouvelle Cellule

@@ -13,7 +13,7 @@ we will:
 **To use this application you need to do the folowing steps In your Terminal:** 
 
     ```
-    git clone https://github.com/mo-hunter123/GTKCalculator.git
+    git clone https://github.com/BinomeI/GTKCalculator.git
 
     cd GTKCalculator
 

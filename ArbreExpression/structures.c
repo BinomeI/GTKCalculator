@@ -6,7 +6,8 @@
 
 typedef struct ndd
 {
-    union Data {
+    union Data 
+    {
         float operand;
         char operateur;
     } val;            //etiquette de noeud
