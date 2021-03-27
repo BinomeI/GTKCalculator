@@ -1,7 +1,6 @@
 #include <gtk/gtk.h>
 #include <string.h>
 #include "ArbreExpression/evaluerresultat.c"
-#include "InfixTpos/hi.c"
 
 GtkWidget *entry;
 GtkWidget *Label;
@@ -28,33 +27,16 @@ static void EvaluerExpression(GtkWidget *button, gpointer data)
     strcpy(buffer, gtk_entry_get_text(GTK_ENTRY(entry)));
 
     printf("%s\n", buffer);
-    
 
-    /*Tester l'arbre*/
-
-
-    //arbre final
     Noeud *Arbre = NULL; 
 
     infixeToPostfixe(buffer);
-    
-    //problem here so we need to take the expression and converte it 
-    //affichage d'expression
-    printf("\n%s\n", buffer);
-
-    //creation d'arbre
     Arbre = creerArbreExpression(buffer); 
 
-    printf("\n");
-    //affichage de l'arbre obtenu
-    affichage_infixe_expresseion(Arbre);
-
     float val = evaluer(Arbre);
-    //affichage de le resultat obtenu 
-    printf("\nle resultat est : %g \n",val);
     char buff[20];
-    sprintf(buff, "%g", val);
-    /*Fin de teste*/
+    sprintf(buff, "%g", val); //convert from Float to string
+
     gtk_entry_set_text(GTK_ENTRY(entry), buff);
 }
 
@@ -119,7 +101,7 @@ static void activate (GtkApplication* app, gpointer user_data)
 
                 if(CalcDesign[i][j] == '=')
                 {
-                    // You need an object to store css information: the CSS Provider
+                    //object to store css information: the CSS Provider
                     GtkCssProvider * cssProvider = gtk_css_provider_new();
                     // Load CSS into the object ("-1" says, that the css string is \0-terminated)
                     gtk_css_provider_load_from_data(cssProvider, "* { background-image:none; background-color:green;}",-1,NULL); 
