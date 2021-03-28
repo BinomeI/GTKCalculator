@@ -6,12 +6,23 @@ GtkWidget *entry;
 GtkWidget *Label;
 gint pos = 1;
 
+
+char CalcDesign[][5] = 
+{
+    {'7', '8', '9', 'D', 'n'},
+    {'4', '5', '6', '*', '/'},
+    {'1', '2', '3', '+', '-'},
+    {'0', '.', '(', ')', '='}
+};
+
+
 static void appendToEntry(GtkWidget *button, gpointer data)
 {
     gtk_editable_insert_text(GTK_EDITABLE(entry), gtk_button_get_label(GTK_BUTTON(button)), sizeof(gtk_button_get_label(GTK_BUTTON(button))), &pos);
     pos += 1;
 }
 
+//not working perfectly as we want 
 static void deleteValue(GtkWidget *button, gpointer data)
 {
     gtk_editable_delete_text(GTK_EDITABLE(entry), pos, pos-1);
@@ -52,13 +63,6 @@ static void showExpression(GtkWidget *button, gpointer data)
 
 }
 
-char CalcDesign[][4] = {
-    {'D', '/', '*', '-'},
-    {'7', '8', '9', '+'},
-    {'4', '5', '6', 'n'},
-    {'1', '2', '3', '='},
-    {'0', '.', 'n', 'n'}
-};
 
 static void activate (GtkApplication* app, gpointer user_data)
 {
@@ -67,12 +71,15 @@ static void activate (GtkApplication* app, gpointer user_data)
     GtkWidget *button;
     GtkWidget *hbox, *vbox;
     
-    GdkRGBA *color = (GdkRGBA*)malloc(sizeof(GdkRGBA));
-    color->red = 60000;
-
+    GtkCssProvider *cssProvider = gtk_css_provider_new();
+    GtkStyleContext * context;
+    
+    //object to store css information: the CSS Provider
+    
     window = gtk_application_window_new (app);
-    gtk_window_set_title (GTK_WINDOW (window), "Window");
-    // gtk_window_set_default_size (GTK_WINDOW (window), 200, 200);
+    gtk_window_set_title (GTK_WINDOW (window), "Calculator");
+    
+    
 
     //le box vertical qui contient les lignes des buttons 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
@@ -83,12 +90,13 @@ static void activate (GtkApplication* app, gpointer user_data)
     gtk_editable_set_editable(GTK_EDITABLE(entry), FALSE); //setting the entry to not be editable
     gtk_widget_set_direction(entry, GTK_TEXT_DIR_LTR); //and inserting text from Left to Right Direction 
     
-    for(int i = 0; i < 5; i++){
+    for(int i = 0; i < 4; i++){
         //box horizontal qui contient les buttons 
         hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
         gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
-        for(int j = 0; j < 4; j++)
+
+        for(int j = 0; j < 5; j++)
         {
             
             char str[2];
@@ -101,30 +109,30 @@ static void activate (GtkApplication* app, gpointer user_data)
 
                 if(CalcDesign[i][j] == '=')
                 {
-                    //object to store css information: the CSS Provider
-                    GtkCssProvider * cssProvider = gtk_css_provider_new();
-                    // Load CSS into the object ("-1" says, that the css string is \0-terminated)
-                    gtk_css_provider_load_from_data(cssProvider, "* { background-image:none; background-color:green;}",-1,NULL); 
-
-                    // The "Style context" manages CSS providers (as there can be more of them)            
-                    GtkStyleContext * context = gtk_widget_get_style_context(button);   
-                    // So we want to add our CSS provider (that contains the CSS) to that "style manager".
-                    gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(cssProvider),GTK_STYLE_PROVIDER_PRIORITY_USER);
-
+                    context = gtk_widget_get_style_context(button);  
+                    gtk_style_context_add_class(context, "Eq-button");
                     g_signal_connect(button, "clicked", G_CALLBACK(EvaluerExpression), NULL);
                 }
                     
                 
                 else if(CalcDesign[i][j] == 'D')
+                {
+                    context = gtk_widget_get_style_context(button);
+                    gtk_style_context_add_class(context, "Del-button");
                     g_signal_connect(button, "clicked", G_CALLBACK(deleteValue), NULL);
-
+                }
+                    
                 else
                     g_signal_connect(button, "clicked", G_CALLBACK(appendToEntry), NULL);
-
             }       
         }
     }
     
+
+    
+    gtk_css_provider_load_from_path(cssProvider, "styles.css", NULL);
+    gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+    // gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_USER);
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     gtk_widget_show_all(window);
     gtk_main();

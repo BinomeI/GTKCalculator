@@ -1,0 +1,13 @@
+.Del-button { 
+    background-image:none; 
+    background-color:red;
+}
+
+.Eq-button { 
+    background-image:none; 
+    background-color:green;
+}
+
+GtkWindow {
+    background-color: royalblue;
+}
